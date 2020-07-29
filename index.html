@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>Ocean.com</title>
+<link href="/css/reset.css" th:href="@{/css/reset.css}" rel="stylesheet" />
+<link href="/css/style.css" th:href="@{/css/style.css}" rel="stylesheet" />
+
+<script src="http://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+$(()=> {
+	$('#searchBtn').on('click', searchWordChange);
+	$('.cartButton').on('click', addCart);
+});
+
+//検索ボタン押下
+let searchWordChange = (event) => {
+	event.preventDefault();
+
+	let searchWord = $("[name='productName']").val();
+	
+	//全角スペースを半角に変換、トリム
+	searchWord = searchWord.replace(/　/g, " ");
+	searchWord = searchWord.replace(/\s+/g, " ");
+	searchWord = searchWord.trim();
+	
+	//<input name="productName"～>のvalueを書き換え
+	$("[name='productName']").val(searchWord);
+	
+	//送信
+	$('#searchProduct').submit();
+}
+
+//カートに追加ボタン押下時の動作
+let addCart = (event) => {
+	event.preventDefault();
+	let tdList = $(event.target).parent().parent().find('td');
+	
+	let count = $(tdList[3]).find('.count').val();
+	
+	if (count === '0' || count === ''){
+		alert('個数が０です。');
+		retuen;
+	} else {
+		$(tdList[3]).find('form').submit();
+	}
+}
+</script>
+</head>
+<body>
+
+
+<header th:insert="fragments/page_header::pageHeader"></header>
+
+<main>
+	<div class="container">
+		<form action="/ocean/searchitem" method="get" id="searchProduct">
+			カテゴリ
+			<select name="categoryId" id="category">
+				<option value="0"></option>
+				<option th:each="category: ${categories}" 
+						th:value="${category.id}" 
+						th:text="${category.categoryName}" 
+						th:selected="${searchCategoryId == category.id}"
+						id="searchCategory" >
+				</option>
+			</select>
+			商品名（部分一致）
+			<input type="text" name="productName" id="searchBox" th:value="${searchWords}"/>
+			<button type="submit" id="searchBtn">検索</button>
+		</form>
+		
+		<div class="noData" th:if="${products.size() == 0}">
+			<p class="info">検索結果はありません。</p>
+		</div>
+			
+		<table class="top">
+			<tr th:if="${products.size() > 0}">
+				<th>画像</th><th>商品名</th><th>価格(円)</th><th>個数</th><th>カート</th>
+			</tr>
+			<tr th:each="item: ${products}" class="products">
+				<td class="image">
+  					<a th:href="'/ocean/product/' + ${item.id}"><img th:src="${item.imageFullPath}" class="itemImage"/></a>
+				</td>
+  				<td>
+ 					<a th:href="'/ocean/product/' + ${item.id}" th:text="${item.productName}" id="search" /></a>
+  				</td>
+				<td th:text="${item.price}"  class="number"/>
+				<td class="compornentTD">
+					<form action="/ocean/cart/add" method="post" id="addCart" style="margin: 0;">	
+						<input type="number" class="count number" value="0" min="0" name="productCount" style="margin: 0;"/>
+						<input type="hidden" class="id" th:value="${item.id}" name="productId"/>
+					</form>
+				</td>
+				<td class="compornentTD">
+					<button class="cartButton">追加</button>
+				</td>
+			</tr>
+		</table>
+	</div>
+</main>
+</body>
+</html>

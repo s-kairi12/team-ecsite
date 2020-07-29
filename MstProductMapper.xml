@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jp.co.internous.ocean.model.mapper.MstProductMapper">
+	
+	<select id="findByProductNameAndCategoryId" resultType="jp.co.internous.ocean.model.domain.MstProduct">
+		select * from mst_product where category_id = #{categoryId} and (
+		<foreach collection="productName" item="productName" index="i">
+			<choose>
+				<when test="i == 0">
+					product_name like '%${productName}%'
+				</when>
+				<otherwise>
+					or product_name like '%${productName}%'
+				</otherwise>
+			</choose>
+		</foreach>
+		)
+	</select>
+	
+	<select id="findByCategoryId" parameterType="int" resultType="jp.co.internous.ocean.model.domain.MstProduct">
+		select * from mst_product where category_id = #{categoryId}
+	</select>
+		
+	<select id="findByProductName" resultType="jp.co.internous.ocean.model.domain.MstProduct">
+		select * from mst_product 
+			<foreach collection="productName" item="productName" index="i">
+				<choose>
+					<when test="i == 0">
+						where product_name like '%${productName}%'
+					</when>
+					<otherwise>
+						or product_name like '%${productName}%'
+					</otherwise>
+				</choose>
+			</foreach>
+	</select>
+</mapper>
