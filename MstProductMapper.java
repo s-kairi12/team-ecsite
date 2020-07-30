@@ -13,7 +13,6 @@ public interface MstProductMapper {
 	@Select("SELECT * FROM mst_product")
 	List<MstProduct> findAll();
 
-	
     //IDに紐づいた商品詳細を呼び出し
 	@Select("SELECT * FROM mst_product WHERE id = #{id}")
 	List<MstProduct> findById(@Param("id") int id);
