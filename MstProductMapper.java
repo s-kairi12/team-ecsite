@@ -14,17 +14,16 @@ public interface MstProductMapper {
 	List<MstProduct> findAll();
 
 	
-    //productIdで情報を探す
+    //IDに紐づいた商品詳細を呼び出し
 	@Select("SELECT * FROM mst_product WHERE id = #{id}")
 	List<MstProduct> findById(@Param("id") int id);
 
 	
     //下記indexController.java
 	List<MstProduct> findByProductNameAndCategoryId
-    (@Param("productName") String[] productName,
-     @Param("categoryId") int categoryId);
+	(@Param("productName") String[] productName,
+	 @Param("categoryId") int categoryId);
 
-    List<MstProduct> findByCategoryId(@Param("categoryId") int categoryId);
-    List<MstProduct> findByProductName(@Param("productName") String[] productName); 
-
+	List<MstProduct> findByCategoryId(@Param("categoryId") int categoryId);
+	List<MstProduct> findByProductName(@Param("productName") String[] productName); 
 }
